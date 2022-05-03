@@ -710,7 +710,7 @@ func TestNoParameterEvaluation(test *testing.T) {
 			Expected: true,
 		},
 		EvaluationTest{
-			
+
 			Name:  "Ternary/Java EL ambiguity",
 			Input: "false ? foo:length()",
 			Functions: map[string]ExpressionFunction{
@@ -1390,6 +1390,20 @@ func TestParameterizedEvaluation(test *testing.T) {
 			Input:      "foo.Nested.Funk",
 			Parameters: []EvaluationParameter{fooParameter},
 			Expected:   "funkalicious",
+		},
+		EvaluationTest{
+
+			Name:       "Nested Map string",
+			Input:      "foo.Map.String",
+			Parameters: []EvaluationParameter{fooParameter},
+			Expected:   "string!",
+		},
+		EvaluationTest{
+
+			Name:       "Nested Map function",
+			Input:      `foo.Map.StringCompare("foo", "bar")`,
+			Parameters: []EvaluationParameter{fooParameter},
+			Expected:   1.0,
 		},
 		EvaluationTest{
 
