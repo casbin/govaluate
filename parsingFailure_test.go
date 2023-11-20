@@ -17,7 +17,6 @@ const (
 	INVALID_NUMERIC          = "Unable to parse numeric value"
 	UNDEFINED_FUNCTION       = "Undefined function"
 	HANGING_ACCESSOR         = "Hanging accessor on token"
-	UNEXPORTED_ACCESSOR      = "Unable to access unexported"
 	INVALID_HEX              = "Unable to parse hex value"
 )
 
@@ -177,13 +176,6 @@ func TestParsingFailure(test *testing.T) {
 			Name:     "Hanging accessor",
 			Input:    "foo.Bar.",
 			Expected: HANGING_ACCESSOR,
-		},
-		ParsingFailureTest{
-
-			// this is expected to change once there are structtags in place that allow aliasing of fields
-			Name:     "Unexported parameter access",
-			Input:    "foo.bar",
-			Expected: UNEXPORTED_ACCESSOR,
 		},
 		ParsingFailureTest{
 			Name:     "Incomplete Hex",

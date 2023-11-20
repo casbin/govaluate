@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -331,6 +332,13 @@ func makeAccessorStage(pair []string) evaluationOperator {
 
 			switch coreValue.Kind() {
 			case reflect.Struct:
+				// check if field is exported
+				firstCharacter := getFirstRune(pair[i])
+				if unicode.ToUpper(firstCharacter) != firstCharacter {
+					errorMsg := fmt.Sprintf("Unable to access unexported field '%s' in '%s'", pair[i], pair[i-1])
+					return nil, errors.New(errorMsg)
+				}
+
 				field = coreValue.FieldByName(pair[i])
 				if field != (reflect.Value{}) {
 					value = field.Interface()
