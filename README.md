@@ -161,13 +161,13 @@ Fields are accessed in a similar way. Assuming `foo` has a field called "Length"
 
 	"foo.Length > 9000"
 
+The values of a `map` are accessed in the same way. Assuming the parameter `foo` is `map[string]int{ "bar": 1 }`
+
+	"foo.bar == 1"
+
 Accessors can be nested to any depth, like the following
 
 	"foo.Bar.Baz.SomeFunction()"
-
-However it is not _currently_ supported to access values in `map`s. So the following will not work
-
-	"foo.SomeMap['key']"
 
 This may be convenient, but note that using accessors involves a _lot_ of reflection. This makes the expression about four times slower than just using a parameter (consult the benchmarks for more precise measurements on your system).
 If at all reasonable, the author recommends extracting the values you care about into a parameter map beforehand, or defining a struct that implements the `Parameters` interface, and which grabs fields as required. If there are functions you want to use, it's better to pass them as expression functions (see the above section). These approaches use no reflection, and are designed to be fast and clean.
