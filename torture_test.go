@@ -16,7 +16,6 @@ var (
 	hello  = "hello"
 	empty  struct{}
 	empty2 *string
-	empty3 *int
 
 	values = []interface{}{
 		-1,
@@ -166,7 +165,7 @@ func checkPanic(expression string, test *testing.T) {
 		parameters[v] = getRandom(values)
 	}
 
-	eval.Evaluate(parameters)
+	_, _ = eval.Evaluate(parameters)
 }
 
 func getRandom(haystack []interface{}) interface{} {

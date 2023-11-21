@@ -10,7 +10,7 @@ import (
 )
 
 /*
-	Represents a test of parsing all tokens correctly from a string
+Represents a test of parsing all tokens correctly from a string
 */
 type TokenParsingTest struct {
 	Name      string
@@ -1450,7 +1450,7 @@ func TestTernaryParsing(test *testing.T) {
 }
 
 /*
-	Tests to make sure that the String() reprsentation of an expression exactly matches what is given to the parse function.
+Tests to make sure that the String() reprsentation of an expression exactly matches what is given to the parse function.
 */
 func TestOriginalString(test *testing.T) {
 
@@ -1476,7 +1476,7 @@ func TestOriginalString(test *testing.T) {
 }
 
 /*
-	Tests to make sure that the Vars() reprsentation of an expression identifies all variables contained within the expression.
+Tests to make sure that the Vars() reprsentation of an expression identifies all variables contained within the expression.
 */
 func TestOriginalVars(test *testing.T) {
 
@@ -1519,9 +1519,7 @@ func TestOriginalVars(test *testing.T) {
 func combineWhitespaceExpressions(testCases []TokenParsingTest) []TokenParsingTest {
 
 	var currentCase, strippedCase TokenParsingTest
-	var caseLength int
-
-	caseLength = len(testCases)
+	caseLength := len(testCases)
 
 	for i := 0; i < caseLength; i++ {
 

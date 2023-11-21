@@ -173,14 +173,14 @@ func regexStage(left interface{}, right interface{}, parameters Parameters) (int
 	var pattern *regexp.Regexp
 	var err error
 
-	switch right.(type) {
+	switch right := right.(type) {
 	case string:
-		pattern, err = regexp.Compile(right.(string))
+		pattern, err = regexp.Compile(right)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Unable to compile regexp pattern '%v': %v", right, err))
+			return nil, fmt.Errorf("Unable to compile regexp pattern '%v': %v", right, err)
 		}
 	case *regexp.Regexp:
-		pattern = right.(*regexp.Regexp)
+		pattern = right
 	}
 
 	return pattern.Match([]byte(left.(string))), nil
@@ -238,9 +238,9 @@ func makeFunctionStage(function ExpressionFunction) evaluationOperator {
 			return function()
 		}
 
-		switch right.(type) {
+		switch right := right.(type) {
 		case []interface{}:
-			return function(right.([]interface{})...)
+			return function(right...)
 		default:
 			return function(right)
 		}
@@ -345,12 +345,12 @@ func makeAccessorStage(pair []string) evaluationOperator {
 				}
 			}
 
-			switch right.(type) {
+			switch right := right.(type) {
 			case []interface{}:
 
-				givenParams := right.([]interface{})
+				givenParams := right
 				params = make([]reflect.Value, len(givenParams))
-				for idx, _ := range givenParams {
+				for idx := range givenParams {
 					params[idx] = reflect.ValueOf(givenParams[idx])
 				}
 
@@ -361,7 +361,7 @@ func makeAccessorStage(pair []string) evaluationOperator {
 					break
 				}
 
-				params = []reflect.Value{reflect.ValueOf(right.(interface{}))}
+				params = []reflect.Value{reflect.ValueOf(right)}
 			}
 
 			params, err = typeConvertParams(method, params)
@@ -408,9 +408,9 @@ func separatorStage(left interface{}, right interface{}, parameters Parameters) 
 
 	var ret []interface{}
 
-	switch left.(type) {
+	switch left := left.(type) {
 	case []interface{}:
-		ret = append(left.([]interface{}), right)
+		ret = append(left, right)
 	default:
 		ret = []interface{}{left, right}
 	}
@@ -467,8 +467,8 @@ func isFloat64(value interface{}) bool {
 }
 
 /*
-	Addition usually means between numbers, but can also mean string concat.
-	String concat needs one (or both) of the sides to be a string.
+Addition usually means between numbers, but can also mean string concat.
+String concat needs one (or both) of the sides to be a string.
 */
 func additionTypeCheck(left interface{}, right interface{}) bool {
 
@@ -482,8 +482,8 @@ func additionTypeCheck(left interface{}, right interface{}) bool {
 }
 
 /*
-	Comparison can either be between numbers, or lexicographic between two strings,
-	but never between the two.
+Comparison can either be between numbers, or lexicographic between two strings,
+but never between the two.
 */
 func comparatorTypeCheck(left interface{}, right interface{}) bool {
 
@@ -505,8 +505,8 @@ func isArray(value interface{}) bool {
 }
 
 /*
-	Converting a boolean to an interface{} requires an allocation.
-	We can use interned bools to avoid this cost.
+Converting a boolean to an interface{} requires an allocation.
+We can use interned bools to avoid this cost.
 */
 func boolIface(b bool) interface{} {
 	if b {

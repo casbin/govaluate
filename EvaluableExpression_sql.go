@@ -8,15 +8,15 @@ import (
 )
 
 /*
-	Returns a string representing this expression as if it were written in SQL.
-	This function assumes that all parameters exist within the same table, and that the table essentially represents
-	a serialized object of some sort (e.g., hibernate).
-	If your data model is more normalized, you may need to consider iterating through each actual token given by `Tokens()`
-	to create your query.
+Returns a string representing this expression as if it were written in SQL.
+This function assumes that all parameters exist within the same table, and that the table essentially represents
+a serialized object of some sort (e.g., hibernate).
+If your data model is more normalized, you may need to consider iterating through each actual token given by `Tokens()`
+to create your query.
 
-	Boolean values are considered to be "1" for true, "0" for false.
+Boolean values are considered to be "1" for true, "0" for false.
 
-	Times are formatted according to this.QueryDateFormat.
+Times are formatted according to this.QueryDateFormat.
 */
 func (this EvaluableExpression) ToSQLQuery() (string, error) {
 
@@ -91,7 +91,7 @@ func (this EvaluableExpression) findNextSQLString(stream *tokenStream, transacti
 		case NREQ:
 			ret = "NOT RLIKE"
 		default:
-			ret = fmt.Sprintf("%s", token.Value.(string))
+			ret = fmt.Sprintf("%s", token.Value)
 		}
 
 	case TERNARY:
@@ -116,7 +116,7 @@ func (this EvaluableExpression) findNextSQLString(stream *tokenStream, transacti
 		switch prefixSymbols[token.Value.(string)] {
 
 		case INVERT:
-			ret = fmt.Sprintf("NOT")
+			ret = "NOT"
 		default:
 
 			right, err := this.findNextSQLString(stream, transactions)
@@ -149,7 +149,7 @@ func (this EvaluableExpression) findNextSQLString(stream *tokenStream, transacti
 
 			ret = fmt.Sprintf("MOD(%s, %s)", left, right)
 		default:
-			ret = fmt.Sprintf("%s", token.Value.(string))
+			ret = fmt.Sprintf("%s", token.Value)
 		}
 	case CLAUSE:
 		ret = "("
