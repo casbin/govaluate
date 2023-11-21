@@ -23,9 +23,7 @@ func newLexerStream(source string) *lexerStream {
 
 func (this *lexerStream) readCharacter() rune {
 
-	var character rune
-
-	character = this.source[this.position]
+	character := this.source[this.position]
 	this.position += 1
 	return character
 }
