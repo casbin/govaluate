@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run semantic-release
-        if: github.repository == 'casbin/casbin' && github.event_name == 'push'
+        if: github.repository == 'casbin/govaluate' && github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release@22.0.8
