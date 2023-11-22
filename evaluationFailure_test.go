@@ -10,12 +10,10 @@ import (
 	"testing"
 )
 
-type DebugStruct struct {
-	x int
-}
+type DebugStruct struct{}
 
 /*
-	Represents a test for parsing failures
+Represents a test for parsing failures
 */
 type EvaluationFailureTest struct {
 	Name       string
@@ -26,16 +24,16 @@ type EvaluationFailureTest struct {
 }
 
 const (
-	INVALID_MODIFIER_TYPES   string = "cannot be used with the modifier"
-	INVALID_COMPARATOR_TYPES        = "cannot be used with the comparator"
-	INVALID_LOGICALOP_TYPES         = "cannot be used with the logical operator"
-	INVALID_TERNARY_TYPES           = "cannot be used with the ternary operator"
-	ABSENT_PARAMETER                = "No parameter"
-	INVALID_REGEX                   = "Unable to compile regexp pattern"
-	INVALID_PARAMETER_CALL          = "No method or field"
-	TOO_FEW_ARGS                    = "Too few arguments to parameter call"
-	TOO_MANY_ARGS                   = "Too many arguments to parameter call"
-	MISMATCHED_PARAMETERS           = "Argument type conversion failed"
+	INVALID_MODIFIER_TYPES   = "cannot be used with the modifier"
+	INVALID_COMPARATOR_TYPES = "cannot be used with the comparator"
+	INVALID_LOGICALOP_TYPES  = "cannot be used with the logical operator"
+	INVALID_TERNARY_TYPES    = "cannot be used with the ternary operator"
+	ABSENT_PARAMETER         = "No parameter"
+	INVALID_REGEX            = "Unable to compile regexp pattern"
+	INVALID_PARAMETER_CALL   = "No method or field"
+	TOO_FEW_ARGS             = "Too few arguments to parameter call"
+	TOO_MANY_ARGS            = "Too many arguments to parameter call"
+	MISMATCHED_PARAMETERS    = "Argument type conversion failed"
 )
 
 // preset parameter map of types that can be used in an evaluation failure test to check typing.
@@ -89,8 +87,8 @@ func TestStructParameter(t *testing.T) {
 
 func TestNilParameterUsage(test *testing.T) {
 
-	expression, err := NewEvaluableExpression("2 > 1")
-	_, err = expression.Evaluate(nil)
+	expression, _ := NewEvaluableExpression("2 > 1")
+	_, err := expression.Evaluate(nil)
 
 	if err != nil {
 		test.Errorf("Expected no error from nil parameter evaluation, got %v\n", err)
@@ -247,8 +245,8 @@ func TestLogicalOperatorTyping(test *testing.T) {
 }
 
 /*
-	While there is type-safe transitions checked at parse-time, tested in the "parsing_test" and "parsingFailure_test" files,
-	we also need to make sure that we receive type mismatch errors during evaluation.
+While there is type-safe transitions checked at parse-time, tested in the "parsing_test" and "parsingFailure_test" files,
+we also need to make sure that we receive type mismatch errors during evaluation.
 */
 func TestComparatorTyping(test *testing.T) {
 

@@ -8,21 +8,21 @@ import (
 )
 
 const (
-	UNEXPECTED_END           string = "Unexpected end of expression"
-	INVALID_TOKEN_TRANSITION        = "Cannot transition token types"
-	INVALID_TOKEN_KIND              = "Invalid token"
-	UNCLOSED_QUOTES                 = "Unclosed string literal"
-	UNCLOSED_BRACKETS               = "Unclosed parameter bracket"
-	UNBALANCED_PARENTHESIS          = "Unbalanced parenthesis"
-	INVALID_NUMERIC                 = "Unable to parse numeric value"
-	UNDEFINED_FUNCTION              = "Undefined function"
-	HANGING_ACCESSOR                = "Hanging accessor on token"
-	UNEXPORTED_ACCESSOR             = "Unable to access unexported"
-	INVALID_HEX                     = "Unable to parse hex value"
+	UNEXPECTED_END           = "Unexpected end of expression"
+	INVALID_TOKEN_TRANSITION = "Cannot transition token types"
+	INVALID_TOKEN_KIND       = "Invalid token"
+	UNCLOSED_QUOTES          = "Unclosed string literal"
+	UNCLOSED_BRACKETS        = "Unclosed parameter bracket"
+	UNBALANCED_PARENTHESIS   = "Unbalanced parenthesis"
+	INVALID_NUMERIC          = "Unable to parse numeric value"
+	UNDEFINED_FUNCTION       = "Undefined function"
+	HANGING_ACCESSOR         = "Hanging accessor on token"
+	UNEXPORTED_ACCESSOR      = "Unable to access unexported"
+	INVALID_HEX              = "Unable to parse hex value"
 )
 
 /*
-	Represents a test for parsing failures
+Represents a test for parsing failures
 */
 type ParsingFailureTest struct {
 	Name     string
