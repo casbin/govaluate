@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -313,6 +314,7 @@ func makeAccessorStage(pair []string) evaluationOperator {
 			}
 		}()
 
+	LOOP:
 		for i := 1; i < len(pair); i++ {
 
 			coreValue := reflect.ValueOf(value)
@@ -325,24 +327,47 @@ func makeAccessorStage(pair []string) evaluationOperator {
 				coreValue = coreValue.Elem()
 			}
 
-			if coreValue.Kind() != reflect.Struct {
-				return nil, errors.New("Unable to access '" + pair[i] + "', '" + pair[i-1] + "' is not a struct")
-			}
+			var field reflect.Value
+			var method reflect.Value
 
-			field := coreValue.FieldByName(pair[i])
-			if field != (reflect.Value{}) {
-				value = field.Interface()
-				continue
-			}
-
-			method := coreValue.MethodByName(pair[i])
-			if method == (reflect.Value{}) {
-				if corePtrVal.IsValid() {
-					method = corePtrVal.MethodByName(pair[i])
+			switch coreValue.Kind() {
+			case reflect.Struct:
+				// check if field is exported
+				firstCharacter := getFirstRune(pair[i])
+				if unicode.ToUpper(firstCharacter) != firstCharacter {
+					errorMsg := fmt.Sprintf("Unable to access unexported field '%s' in '%s'", pair[i], pair[i-1])
+					return nil, errors.New(errorMsg)
 				}
+
+				field = coreValue.FieldByName(pair[i])
+				if field != (reflect.Value{}) {
+					value = field.Interface()
+					continue LOOP
+				}
+
+				method = coreValue.MethodByName(pair[i])
 				if method == (reflect.Value{}) {
-					return nil, errors.New("No method or field '" + pair[i] + "' present on parameter '" + pair[i-1] + "'")
+					if corePtrVal.IsValid() {
+						method = corePtrVal.MethodByName(pair[i])
+					}
 				}
+			case reflect.Map:
+				field = coreValue.MapIndex(reflect.ValueOf(pair[i]))
+				if field != (reflect.Value{}) {
+					inter := field.Interface()
+					if reflect.TypeOf(inter).Kind() == reflect.Func {
+						method = reflect.ValueOf(inter)
+					} else {
+						value = inter
+						continue LOOP
+					}
+				}
+			default:
+				return nil, errors.New("Unable to access '" + pair[i] + "', '" + pair[i-1] + "' is not a struct or map")
+			}
+
+			if method == (reflect.Value{}) {
+				return nil, errors.New("No method or field '" + pair[i] + "' present on parameter '" + pair[i-1] + "'")
 			}
 
 			switch right := right.(type) {
