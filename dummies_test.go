@@ -7,7 +7,7 @@ import (
 )
 
 /*
-	Struct used to test "parameter calls".
+Struct used to test "parameter calls".
 */
 type dummyParameter struct {
 	String    string
@@ -73,6 +73,8 @@ var dummyParameterInstance = dummyParameter{
 		"String":        "string!",
 		"Int":           101,
 		"StringCompare": strings.Compare,
+		"IntArray":      []interface{}{1, 2, 3},
+		"StringArray":   []interface{}{"foo", "bar", "baz"},
 	},
 }
 
