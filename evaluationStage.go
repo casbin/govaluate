@@ -446,6 +446,7 @@ func separatorStage(left interface{}, right interface{}, parameters Parameters) 
 func inStage(left interface{}, right interface{}, parameters Parameters) (interface{}, error) {
 
 	for _, value := range right.([]interface{}) {
+		value = castToFloat64(value)
 		if left == value {
 			return true, nil
 		}
