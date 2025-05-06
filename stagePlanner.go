@@ -186,6 +186,7 @@ func planStages(tokens []ExpressionToken) (*evaluationStage, error) {
 	if err != nil {
 		return nil, err
 	}
+	stream.close()
 
 	// while we're now fully-planned, we now need to re-order same-precedence operators.
 	// this could probably be avoided with a different planning method

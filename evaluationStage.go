@@ -184,7 +184,7 @@ func regexStage(left interface{}, right interface{}, parameters Parameters) (int
 		pattern = right
 	}
 
-	return pattern.Match([]byte(left.(string))), nil
+	return pattern.MatchString(left.(string)), nil
 }
 
 func notRegexStage(left interface{}, right interface{}, parameters Parameters) (interface{}, error) {

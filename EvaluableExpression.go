@@ -3,6 +3,7 @@ package govaluate
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 const isoDateFormat string = "2006-01-02T15:04:05.999999999Z0700"
@@ -137,6 +138,12 @@ func (this EvaluableExpression) Evaluate(parameters map[string]interface{}) (int
 	return this.Eval(MapParameters(parameters))
 }
 
+var sanitizedParamsPool = sync.Pool{
+	New: func() interface{} {
+		return &sanitizedParameters{}
+	},
+}
+
 /*
 	Runs the entire expression using the given [parameters].
 	e.g., If the expression contains a reference to the variable "foo", it will be taken from `parameters.Get("foo")`.
@@ -154,13 +161,21 @@ func (this EvaluableExpression) Eval(parameters Parameters) (interface{}, error)
 		return nil, nil
 	}
 
+	free := false
 	if parameters != nil {
-		parameters = &sanitizedParameters{parameters}
+		free = true
+		tmp := sanitizedParamsPool.Get().(*sanitizedParameters)
+		tmp.orig = parameters
+		parameters = tmp
 	} else {
 		parameters = DUMMY_PARAMETERS
 	}
 
-	return this.evaluateStage(this.evaluationStages, parameters)
+	ret, err := this.evaluateStage(this.evaluationStages, parameters)
+	if free {
+		sanitizedParamsPool.Put(parameters)
+	}
+	return ret, err
 }
 
 func (this EvaluableExpression) evaluateStage(stage *evaluationStage, parameters Parameters) (interface{}, error) {
@@ -273,4 +288,11 @@ func (this EvaluableExpression) Vars() []string {
 		}
 	}
 	return varlist
+}
+
+/*
+Removes the tokens from the EvaluableExpression. This will cause the Tokens() and Vars() functions to no longer operate, but will save memory.
+*/
+func (this *EvaluableExpression) CleanupTokens() {
+	this.tokens = this.tokens[:0]
 }
