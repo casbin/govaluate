@@ -20,7 +20,9 @@ var (
 )
 
 func parseTokens(expression string, functions map[string]ExpressionFunction) ([]ExpressionToken, error) {
+	samplesMu.Lock()
 	ret := make([]ExpressionToken, 0, averageTokens)
+	samplesMu.Unlock()
 	var token ExpressionToken
 	var stream *lexerStream
 	var state lexerState
