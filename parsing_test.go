@@ -1141,6 +1141,24 @@ func TestModifierParsing(test *testing.T) {
 				},
 			},
 		},
+		{
+			Name:  "Single cyrilic parameter with op",
+			Input: "переменная * 1",
+			Expected: []ExpressionToken{
+				{
+					Kind:  VARIABLE,
+					Value: "переменная",
+				},
+				{
+					Kind:  MODIFIER,
+					Value: "*",
+				},
+				{
+					Kind:  NUMERIC,
+					Value: 1.0,
+				},
+			},
+		},
 	}
 
 	tokenParsingTests = combineWhitespaceExpressions(tokenParsingTests)

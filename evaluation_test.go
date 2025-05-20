@@ -1453,6 +1453,12 @@ func TestParameterizedEvaluation(test *testing.T) {
 			Parameters: []EvaluationParameter{fooParameter},
 			Expected:   false,
 		},
+		{
+			Name:       "Test with cyrilic parameter",
+			Input:      "переменная * 5",
+			Parameters: []EvaluationParameter{{Name: "переменная", Value: 2}},
+			Expected:   float64(10),
+		},
 	}
 
 	runEvaluationTests(evaluationTests, test)
