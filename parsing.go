@@ -308,9 +308,10 @@ Returns false if the stream ended before whitespace was broken or condition was 
 func readUntilFalse(stream *lexerStream, includeWhitespace bool, breakWhitespace bool, allowEscaping bool, condition func(rune) bool) (string, bool) {
 
 	tokenBuffer := tokenBufferPool.Get().(*bytes.Buffer)
+	tokenBuffer.Reset()
 	var character rune
 
-	startPosition := stream.position
+	startPosition := stream.strPosition
 	reuseString := true
 	trimString := false
 	conditioned := false
@@ -356,7 +357,7 @@ func readUntilFalse(stream *lexerStream, includeWhitespace bool, breakWhitespace
 	if reuseString {
 		tokenBuffer.Reset()
 		tokenBufferPool.Put(tokenBuffer)
-		ret := stream.sourceString[startPosition:stream.position]
+		ret := stream.sourceString[startPosition:stream.strPosition]
 		if trimString {
 			ret = ret[:len(ret)-1]
 		}
