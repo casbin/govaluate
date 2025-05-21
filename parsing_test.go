@@ -944,6 +944,63 @@ func TestComparatorParsing(test *testing.T) {
 	}
 
 	tokenParsingTests = combineWhitespaceExpressions(tokenParsingTests)
+	// The white space actually matters for this test...
+	tokenParsingTests = append(tokenParsingTests, TokenParsingTest{
+		Name:  "Cyrilic characters Array membership",
+		Input: `!(переменная IN ("Н11", "Н12","Н13","Н14"))`,
+		Expected: []ExpressionToken{
+			{
+				Kind:  PREFIX,
+				Value: "!",
+			},
+			{
+				Kind: CLAUSE,
+			},
+			{
+				Kind:  VARIABLE,
+				Value: "переменная",
+			},
+			{
+				Kind:  COMPARATOR,
+				Value: "in",
+			},
+			{
+				Kind: CLAUSE,
+			},
+			{
+				Kind:  STRING,
+				Value: "Н11",
+			},
+			{
+				Kind: SEPARATOR,
+			},
+			{
+				Kind:  STRING,
+				Value: "Н12",
+			},
+			{
+				Kind: SEPARATOR,
+			},
+			{
+				Kind:  STRING,
+				Value: "Н13",
+			},
+			{
+				Kind: SEPARATOR,
+			},
+			{
+				Kind:  STRING,
+				Value: "Н14",
+			},
+			{
+				Kind: CLAUSE_CLOSE,
+			},
+			{
+				Kind: CLAUSE_CLOSE,
+			},
+		},
+	},
+	)
 	runTokenParsingTest(tokenParsingTests, test)
 }
 

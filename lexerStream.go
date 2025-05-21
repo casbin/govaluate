@@ -53,7 +53,7 @@ func (this *lexerStream) rewind(amount int) {
 			this.position -= 1
 			continue
 		}
-		strAmount += utf8.RuneLen(this.source[this.position])
+		strAmount += utf8.RuneLen(this.source[this.position-1])
 		this.position -= 1
 	}
 	this.strPosition -= strAmount
