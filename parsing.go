@@ -15,11 +15,14 @@ import (
 
 var (
 	averageTokens = 1
+	samplesMu     = sync.Mutex{}
 	samples       = make([]int, 0, 10)
 )
 
 func parseTokens(expression string, functions map[string]ExpressionFunction) ([]ExpressionToken, error) {
+	samplesMu.Lock()
 	ret := make([]ExpressionToken, 0, averageTokens)
+	samplesMu.Unlock()
 	var token ExpressionToken
 	var stream *lexerStream
 	var state lexerState
@@ -50,6 +53,7 @@ func parseTokens(expression string, functions map[string]ExpressionFunction) ([]
 		ret = append(ret, token)
 	}
 	stream.close()
+	samplesMu.Lock()
 	if len(samples) == cap(samples) {
 		copy(samples, samples[1:])
 		samples[len(samples)-1] = len(ret)
@@ -61,6 +65,7 @@ func parseTokens(expression string, functions map[string]ExpressionFunction) ([]
 		total += val
 	}
 	averageTokens = total / len(samples)
+	samplesMu.Unlock()
 
 	err = checkBalance(ret)
 	if err != nil {

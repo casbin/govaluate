@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"reflect"
+	"sync"
 	"testing"
 	"time"
 	"unicode"
@@ -1740,4 +1741,44 @@ func runTokenParsingTest(tokenParsingTests []TokenParsingTest, test *testing.T) 
 
 func noop(arguments ...interface{}) (interface{}, error) {
 	return nil, nil
+}
+
+func TestParallelParsing(t *testing.T) {
+	// This test is to ensure that the parser is thread-safe.
+	// It runs a number of parsing tests in parallel, and checks that they all pass.
+
+	var wg sync.WaitGroup
+
+	tokenParsingTests := []TokenParsingTest{
+		TokenParsingTest{
+			Name:  "Simple expression",
+			Input: "1 + 1",
+			Expected: []ExpressionToken{
+				ExpressionToken{
+					Kind:  NUMERIC,
+					Value: 1.0,
+				},
+				ExpressionToken{
+					Kind:  MODIFIER,
+					Value: "+",
+				},
+				ExpressionToken{
+					Kind:  NUMERIC,
+					Value: 1.0,
+				},
+			},
+		},
+	}
+
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := 0; i < 100; i++ {
+				runTokenParsingTest(tokenParsingTests, t)
+			}
+		}()
+	}
+
+	wg.Wait()
 }
