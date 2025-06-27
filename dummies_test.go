@@ -18,23 +18,23 @@ type dummyParameter struct {
 	Map       map[string]interface{}
 }
 
-func (this dummyParameter) Func() string {
+func (dummyParameter) Func() string {
 	return "funk"
 }
 
-func (this dummyParameter) Func2() (string, error) {
+func (dummyParameter) Func2() (string, error) {
 	return "frink", nil
 }
 
-func (this *dummyParameter) Func3() string {
+func (*dummyParameter) Func3() string {
 	return "fronk"
 }
 
-func (this dummyParameter) FuncArgStr(arg1 string) string {
+func (dummyParameter) FuncArgStr(arg1 string) string {
 	return arg1
 }
 
-func (this dummyParameter) TestArgs(str string, ui uint, ui8 uint8, ui16 uint16, ui32 uint32, ui64 uint64, i int, i8 int8, i16 int16, i32 int32, i64 int64, f32 float32, f64 float64, b bool) string {
+func (dummyParameter) TestArgs(str string, ui uint, ui8 uint8, ui16 uint16, ui32 uint32, ui64 uint64, i int, i8 int8, i16 int16, i32 int32, i64 int64, f32 float32, f64 float64, b bool) string {
 
 	var sum float64
 
@@ -49,7 +49,7 @@ func (this dummyParameter) TestArgs(str string, ui uint, ui8 uint8, ui16 uint16,
 	return fmt.Sprintf("%v: %v", str, sum)
 }
 
-func (this dummyParameter) AlwaysFail() (interface{}, error) {
+func (dummyParameter) AlwaysFail() (interface{}, error) {
 	return nil, errors.New("function should always fail")
 }
 
@@ -57,7 +57,7 @@ type dummyNestedParameter struct {
 	Funk string
 }
 
-func (this dummyNestedParameter) Dunk(arg1 string) string {
+func (dummyNestedParameter) Dunk(arg1 string) string {
 	return arg1 + "dunk"
 }
 
