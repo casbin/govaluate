@@ -48,26 +48,26 @@ var (
 	_false = interface{}(false)
 )
 
-func (this *evaluationStage) swapWith(other *evaluationStage) {
+func (e *evaluationStage) swapWith(other *evaluationStage) {
 
 	temp := *other
-	other.setToNonStage(*this)
-	this.setToNonStage(temp)
+	other.setToNonStage(*e)
+	e.setToNonStage(temp)
 }
 
-func (this *evaluationStage) setToNonStage(other evaluationStage) {
+func (e *evaluationStage) setToNonStage(other evaluationStage) {
 
-	this.symbol = other.symbol
-	this.operator = other.operator
-	this.leftTypeCheck = other.leftTypeCheck
-	this.rightTypeCheck = other.rightTypeCheck
-	this.typeCheck = other.typeCheck
-	this.typeErrorFormat = other.typeErrorFormat
+	e.symbol = other.symbol
+	e.operator = other.operator
+	e.leftTypeCheck = other.leftTypeCheck
+	e.rightTypeCheck = other.rightTypeCheck
+	e.typeCheck = other.typeCheck
+	e.typeErrorFormat = other.typeErrorFormat
 }
 
-func (this *evaluationStage) isShortCircuitable() bool {
+func (e *evaluationStage) isShortCircuitable() bool {
 
-	switch this.symbol {
+	switch e.symbol {
 	case AND:
 		fallthrough
 	case OR:
@@ -178,7 +178,7 @@ func regexStage(left interface{}, right interface{}, parameters Parameters) (int
 	case string:
 		pattern, err = regexp.Compile(right)
 		if err != nil {
-			return nil, fmt.Errorf("Unable to compile regexp pattern '%v': %v", right, err)
+			return nil, fmt.Errorf("unable to compile regexp pattern '%v': %w", right, err)
 		}
 	case *regexp.Regexp:
 		pattern = right
@@ -268,9 +268,9 @@ func typeConvertParams(method reflect.Value, params []reflect.Value) ([]reflect.
 
 	if numIn != numParams {
 		if numIn > numParams {
-			return nil, fmt.Errorf("Too few arguments to parameter call: got %d arguments, expected %d", len(params), numIn)
+			return nil, fmt.Errorf("too few arguments to parameter call: got %d arguments, expected %d", len(params), numIn)
 		}
-		return nil, fmt.Errorf("Too many arguments to parameter call: got %d arguments, expected %d", len(params), numIn)
+		return nil, fmt.Errorf("too many arguments to parameter call: got %d arguments, expected %d", len(params), numIn)
 	}
 
 	for i := 0; i < numIn; i++ {

@@ -151,7 +151,7 @@ func readToken(stream *lexerStream, state lexerState, functions map[string]Expre
 			kind = VARIABLE
 
 			if !completed {
-				return ExpressionToken{}, errors.New("Unclosed parameter bracket"), false
+				return ExpressionToken{}, errors.New("unclosed parameter bracket"), false
 			}
 
 			// above method normally rewinds us to the closing bracket, which we want to skip.
@@ -210,7 +210,7 @@ func readToken(stream *lexerStream, state lexerState, functions map[string]Expre
 			tokenValue, completed = readUntilFalse(stream, true, false, true, isNotQuote)
 
 			if !completed {
-				return ExpressionToken{}, errors.New("Unclosed string literal"), false
+				return ExpressionToken{}, errors.New("unclosed string literal"), false
 			}
 
 			// advance the stream one position, since reading until false assumes the terminator is a real token
@@ -442,7 +442,7 @@ func checkBalance(tokens []ExpressionToken) error {
 	stream.close()
 
 	if parens != 0 {
-		return errors.New("Unbalanced parenthesis")
+		return errors.New("unbalanced parenthesis")
 	}
 	return nil
 }
@@ -472,13 +472,13 @@ func isNotQuote(character rune) bool {
 
 func isNotAlphanumeric(character rune) bool {
 
-	return !(unicode.IsDigit(character) ||
-		unicode.IsLetter(character) ||
-		character == '(' ||
-		character == ')' ||
-		character == '[' ||
-		character == ']' || // starting to feel like there needs to be an `isOperation` func (#59)
-		!isNotQuote(character))
+	return !unicode.IsDigit(character) &&
+		!unicode.IsLetter(character) &&
+		character != '(' &&
+		character != ')' &&
+		character != '[' &&
+		character != ']' && // starting to feel like there needs to be an `isOperation` func (#59)
+		isNotQuote(character)
 }
 
 func isVariableName(character rune) bool {

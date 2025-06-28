@@ -34,36 +34,36 @@ func newLexerStream(source string) *lexerStream {
 	return ret
 }
 
-func (this *lexerStream) readCharacter() rune {
-	character := this.source[this.position]
-	this.position += 1
-	this.strPosition += utf8.RuneLen(character)
+func (stream *lexerStream) readCharacter() rune {
+	character := stream.source[stream.position]
+	stream.position += 1
+	stream.strPosition += utf8.RuneLen(character)
 	return character
 }
 
-func (this *lexerStream) rewind(amount int) {
+func (stream *lexerStream) rewind(amount int) {
 	if amount < 0 {
-		this.position -= amount
-		this.strPosition -= amount
+		stream.position -= amount
+		stream.strPosition -= amount
 	}
 	strAmount := 0
 	for i := 0; i < amount; i++ {
-		if this.position >= this.length {
+		if stream.position >= stream.length {
 			strAmount += 1
-			this.position -= 1
+			stream.position -= 1
 			continue
 		}
-		strAmount += utf8.RuneLen(this.source[this.position-1])
-		this.position -= 1
+		strAmount += utf8.RuneLen(stream.source[stream.position-1])
+		stream.position -= 1
 	}
-	this.strPosition -= strAmount
+	stream.strPosition -= strAmount
 }
 
-func (this lexerStream) canRead() bool {
-	return this.position < this.length
+func (stream lexerStream) canRead() bool {
+	return stream.position < stream.length
 }
 
-func (this *lexerStream) close() {
-	this.source = this.source[:0]
-	lexerStreamPool.Put(this)
+func (stream *lexerStream) close() {
+	stream.source = stream.source[:0]
+	lexerStreamPool.Put(stream)
 }
