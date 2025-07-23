@@ -1,0 +1,74 @@
+# golangci-lint configuration file
+# See https://golangci-lint.run/usage/configuration/
+
+run:
+  deadline: 10m
+  go: "1.21"
+  modules-download-mode: mod
+
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - dupl
+    - errcheck
+    - goconst
+    - gocyclo
+    - gofmt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - prealloc
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - revive
+    - exportloopref
+
+# All available settings of specific linters
+linters-settings:
+  lll:
+    # max line length, lines longer will be reported. Default is 120.
+    # '\t' is counted as 1 character by default, and can be changed with the tab-width option
+    line-length: 150
+    # tab width in spaces. Default to 1.
+    tab-width: 1
+  
+  goimports:
+    local-prefixes: github.com/casbin/govaluate
+  
+  gocyclo:
+    min-complexity: 15
+  
+  dupl:
+    threshold: 100
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - dupl
+        - gocognit
+    - path: benchmarks_test\.go
+      linters:
+        - gocyclo
+        - dupl
+        - gocognit
+    - path: torture_test\.go
+      linters:
+        - gocyclo
+        - dupl
+        - gocognit
+
+  max-issues-per-linter: 0
+  max-same-issues: 0 

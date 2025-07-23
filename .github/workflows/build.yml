@@ -4,44 +4,81 @@ on: [push, pull_request]
 
 jobs:
   test:
+    name: Running Go tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['1.18', '1.19', '1.20']
+        go: ['1.18', '1.19', '1.20', '1.21']
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      
+      - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
+          cache-dependency-path: ./go.mod
 
-      - name: Run go test
-        run:  go test -race -v -bench=.
+      - name: Tests
+        run: |
+          go test -v -race -bench=. $(go list ./...)
 
   lint:
+    name: Go-Linter
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      
+      - uses: actions/setup-go@v4
         with:
-          go-version: '1.20'
+          go-version: '1.21'
+          cache: false
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         with:
-          version: v1.51
+          version: v1.55.2
+          args: --timeout=10m
 
-  semantic-release:
-    needs: [test, lint]
+  format:
+    name: Code Format Check
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - uses: actions/checkout@v4
+      
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache-dependency-path: ./go.mod
+
+      - name: Check go fmt
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "Code is not formatted. Please run 'go fmt -s ./...'"
+            gofmt -s -d .
+            exit 1
+          fi
+
+      - name: Check go mod tidy
+        run: |
+          go mod tidy
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "go.mod or go.sum is not tidy. Please run 'go mod tidy'"
+            git diff
+            exit 1
+          fi
+
+  semantic-release:
+    name: Release
+    needs: [test, lint, format]
+    runs-on: ubuntu-latest
+    if: github.repository == 'casbin/govaluate' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: -1
 
       - name: Run semantic-release
-        if: github.repository == 'casbin/govaluate' && github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release@22.0.8
