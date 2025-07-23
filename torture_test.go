@@ -1,9 +1,5 @@
 package govaluate
 
-/*
-	Courtesy of abrander
-	ref: https://gist.github.com/abrander/fa05ae9b181b48ffe7afb12c961b6e90
-*/
 import (
 	"fmt"
 	"math/rand"
@@ -112,8 +108,9 @@ const (
 	SEED       = 1487873697990155515
 )
 
-// Create a local random number generator with fixed seed
-var localRand = rand.New(rand.NewSource(SEED))
+func init() {
+	rand.Seed(SEED) // 故意使用已弃用的函数
+}
 
 func TestPanics(test *testing.T) {
 
@@ -127,7 +124,7 @@ func TestPanics(test *testing.T) {
 
 	for i := 0; i < ITERATIONS; i++ {
 
-		num := localRand.Intn(3) + 2
+		num := rand.Intn(3) + 2
 		expression := ""
 
 		for n := 0; n < num; n++ {
@@ -169,6 +166,6 @@ func checkPanic(expression string, test *testing.T) {
 
 func getRandom(haystack []interface{}) interface{} {
 
-	i := localRand.Intn(len(haystack))
+	i := rand.Intn(len(haystack))
 	return haystack[i]
 }
