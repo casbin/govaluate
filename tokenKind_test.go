@@ -5,8 +5,8 @@ import (
 )
 
 /*
-	Tests to make sure that all the different token kinds have different string representations
-	Gotta get that 95% code coverage yall. That's why tests like this get written; over-reliance on bad metrics.
+Tests to make sure that all the different token kinds have different string representations
+Gotta get that 95% code coverage yall. That's why tests like this get written; over-reliance on bad metrics.
 */
 func TestTokenKindStrings(test *testing.T) {
 
