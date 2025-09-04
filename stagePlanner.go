@@ -403,7 +403,10 @@ func planValue(stream *tokenStream) (*evaluationStage, error) {
 		// clauses with single elements don't trigger SEPARATE stage planner
 		// this ensures that when used as part of an "in" comparison, the array requirement passes
 		if prev.Kind == COMPARATOR && prev.Value == "in" && ret.symbol == LITERAL {
-			ret.operator = ensureSliceStage(ret.operator)
+			// We need to copy this in case we are using the cached value...
+			tmp := *ret
+			tmp.operator = ensureSliceStage(ret.operator)
+			ret = &tmp
 		}
 
 		// advance past the CLAUSE_CLOSE token. We know that it's a CLAUSE_CLOSE, because at parse-time we check for unbalanced parens.
@@ -428,7 +431,7 @@ func planValue(stream *tokenStream) (*evaluationStage, error) {
 		return nil, nil
 
 	case VARIABLE:
-		operator = makeParameterStage(token.Value.(string))
+		return getParameterStage(token.Value.(string))
 
 	case NUMERIC:
 		fallthrough
@@ -437,11 +440,9 @@ func planValue(stream *tokenStream) (*evaluationStage, error) {
 	case PATTERN:
 		fallthrough
 	case BOOLEAN:
-		symbol = LITERAL
-		operator = makeLiteralStage(token.Value)
+		return getConstantStage(token.Value)
 	case TIME:
-		symbol = LITERAL
-		operator = makeLiteralStage(float64(token.Value.(time.Time).Unix()))
+		return getConstantStage(float64(token.Value.(time.Time).Unix()))
 
 	case PREFIX:
 		stream.rewind()
